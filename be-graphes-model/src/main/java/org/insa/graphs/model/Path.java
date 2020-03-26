@@ -30,12 +30,33 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
-            throws IllegalArgumentException {
+    		throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+        Arc arc2 = null;
+        if(nodes.size() == 1) {
+            return new Path(graph, nodes.get(0));
+        }
+        for(int i = 0; i < nodes.size()- 1; i++) {
+            if(nodes.get(i).getSuccessors() == null) {
+                throw new IllegalArgumentException("A node has no arc from this list of nodes");
+            }
+            for(int j = 0; j < nodes.get(i).getNumberOfSuccessors(); j++) {
+                if(nodes.get(i).getSuccessors().get(j).getDestination() == nodes.get(i+1)) {
+                    if(arc2 == null || (nodes.get(i).getSuccessors().get(j).getDestination() != arc2.getOrigin()
+                            && nodes.get(i).getSuccessors().get(j).getMinimumTravelTime() < arc2.getMinimumTravelTime())) {
+                    	arc2 = nodes.get(i).getSuccessors().get(j);
+                    }
+                }
+            }
+            if(arc2 == null) {
+                throw new IllegalArgumentException("no path in this list of nodes");
+            }else {
+                arcs.add(arc2);
+                arc2 = null;
+            }
+        }
         return new Path(graph, arcs);
     }
 
@@ -73,7 +94,7 @@ public class Path {
                 }
             }
             if(arc2 == null) {
-                throw new IllegalArgumentException("no path this list of nodes");
+                throw new IllegalArgumentException("no path in this list of nodes");
             }else {
                 arcs.add(arc2);
                 arc2 = null;
