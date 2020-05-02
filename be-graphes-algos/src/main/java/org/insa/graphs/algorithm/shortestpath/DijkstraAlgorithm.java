@@ -45,20 +45,25 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		labels[i] = new Label(graph.get(i),null,Double.POSITIVE_INFINITY);
         	}
         }
-        
+        boolean originOK = false;
         Label current = null;
         while(labels[data.getDestination().getId()].getMarque() == false ) { 
         	
         	current = tas.deleteMin();
+        	if(originOK == false) {
+        		this.notifyOriginProcessed(current.getSommetCourant());
+        		originOK = true;
+        	}
         	
         	current.setMarque(true);
+        	this.notifyNodeMarked(current.getSommetCourant());
         	double coutTmp;
         	
         	for(Arc arcsSucessor : current.getSommetCourant().getSuccessors()) { //on parcourt tous les successeurs de current
         		
         		if(labels[arcsSucessor.getDestination().getId()].getMarque() == false && data.isAllowed(arcsSucessor) ==true) { //si y est pas marquée et si l'arc est parcourable avec notre mode de transport
         			if(labels[arcsSucessor.getDestination().getId()].getCout() > current.getCout() + arcsSucessor.getLength()) {
-        				
+        				this.notifyNodeReached(current.getSommetCourant());
         				coutTmp = current.getCout() + arcsSucessor.getLength(); // on met à jour le cost de y
         				if(labels[arcsSucessor.getDestination().getId()].getCout() < Double.POSITIVE_INFINITY) {//si le cout est infini
         					tas.remove(labels[arcsSucessor.getDestination().getId()]);
@@ -74,7 +79,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         }
         
-                
+        this.notifyDestinationReached(current.getSommetCourant());        
         ArrayList<Arc> arcs = new ArrayList<>();
         Arc arc = predecessorArcs[data.getDestination().getId()];
         while (arc != null) {
