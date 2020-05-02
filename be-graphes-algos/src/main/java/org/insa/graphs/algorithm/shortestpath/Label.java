@@ -21,7 +21,7 @@ public class Label implements Comparable<Label>{
 	public Label(Node courant, Arc parent, double cout) {
 		this.sommetCourant = courant;
 		this.marque = false;
-		this.cout = Float.POSITIVE_INFINITY;
+		this.cout = cout;
 		this.pere = parent;
 	}
 	
