@@ -47,7 +47,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         boolean originOK = false;
         Label current = null;
-        while(labels[data.getDestination().getId()].getMarque() == false ) { 
+        while(tas.isEmpty() == false ) { //le tas est vide ou bien la destination est atteinte
         	
         	current = tas.deleteMin();
         	if(originOK == false) {
@@ -56,6 +56,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         	
         	current.setMarque(true);
+        	//System.out.println(current.getCout()); tester si le cout des labels est croissant
         	this.notifyNodeMarked(current.getSommetCourant());
         	double coutTmp;
         	
@@ -72,26 +73,32 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         				labels[arcsSucessor.getDestination().getId()].setPere(arcsSucessor); //mettre le parent à jour
         				predecessorArcs[arcsSucessor.getDestination().getId()] = arcsSucessor;
         				tas.insert(labels[arcsSucessor.getDestination().getId()]);
+        				this.notifyNodeMarked(labels[arcsSucessor.getDestination().getId()].getSommetCourant());
         			}
         				
         			
         		}
         	}
         }
-        
-        this.notifyDestinationReached(current.getSommetCourant());        
-        ArrayList<Arc> arcs = new ArrayList<>();
-        Arc arc = predecessorArcs[data.getDestination().getId()];
-        while (arc != null) {
-            arcs.add(arc);
-            arc = predecessorArcs[arc.getOrigin().getId()];
+        if(labels[data.getDestination().getId()].getMarque() == true) { //destination atteinte chemin réalisable
+        	this.notifyDestinationReached(current.getSommetCourant());        
+            ArrayList<Arc> arcs = new ArrayList<>();
+            Arc arc = predecessorArcs[data.getDestination().getId()];
+            while (arc != null) {
+                arcs.add(arc);
+                arc = predecessorArcs[arc.getOrigin().getId()];
+            }
+
+            // Reverse the path...
+            Collections.reverse(arcs);
+
+            // Create the final solution.
+            solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
+        }else {//pas de solution
+        	solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);
         }
-
-        // Reverse the path...
-        Collections.reverse(arcs);
-
-        // Create the final solution.
-        solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
+        
+        
         
         return solution;
     }
