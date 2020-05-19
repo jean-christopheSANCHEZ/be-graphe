@@ -78,15 +78,19 @@ public class Label implements Comparable<Label>{
 	public double getCout() {
 		return cout;
 	}
+	
+	public double getTotalCost() {
+		return cout;
+	}
 
 
 	@Override
 	public int compareTo(Label arg0) {
 		int result;
-		if (this.getCout() < arg0.getCout()) {
+		if (this.getTotalCost() < arg0.getTotalCost()) {
 			result = -1;
 		}
-		else if (this.getCout() == arg0.getCout()) {
+		else if (this.getTotalCost() == arg0.getTotalCost()) {
 			result = 0;
 		}
 		else {

@@ -97,13 +97,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             Path shortest_chemin;
             shortest_chemin = new Path(graph, arcs);
             Path le_chemin = new Path(graph, arcs);
-            if(le_chemin.isValid() == true) {
-            	if(labels[data.getDestination().getId()].getCout() == shortest_chemin.getLength()) {
+            if(le_chemin.isValid() == true) {//il existe une solution
+            	if(labels[data.getDestination().getId()].getCout() == shortest_chemin.getLength()) {//cette soilution est optimale
             		solution = new ShortestPathSolution(data, Status.OPTIMAL, le_chemin);
-            	}else {
+            	}else {//la solution n'est pas optimale
             		solution = new ShortestPathSolution(data, Status.FEASIBLE, le_chemin);
             	}
-            }else {
+            }else {//pas de solution
             	solution = new ShortestPathSolution(data, Status.INFEASIBLE, le_chemin);
             }
         }else {//pas de solution
