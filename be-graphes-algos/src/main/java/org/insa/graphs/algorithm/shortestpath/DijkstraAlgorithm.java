@@ -23,8 +23,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         //déclaration
         Graph graph = data.getGraph();
-        Node[] noeuds;
-        noeuds = new Node[graph.size()];
+        ArrayList<Node> list_noeuds = new ArrayList<Node>();
+        
         Arc[] predecessorArcs = new Arc[graph.size()];
         Label[] labels ;
         labels = new Label[graph.size()];
@@ -35,7 +35,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         //On initialise la source à 0 ainsi que les tableaux
         
         for(int i = 0; i < graph.size();i++) {
-        	noeuds[i] = graph.get(i);
+        	
+        	list_noeuds.add(graph.get(i));
         	if(data.getOrigin().equals(graph.get(i))) {
         		Label origine = new Label(graph.get(i),null,0);
         		labels[i] = origine;
@@ -47,7 +48,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         boolean originOK = false;
         Label current = null;
-        while(tas.isEmpty() == false ) { //le tas est vide ou bien la destination est atteinte
+        while(tas.isEmpty() == false && labels[data.getDestination().getId()].getMarque() == false) { //le tas est vide ou bien la destination est atteinte
         	
         	current = tas.deleteMin();
         	if(originOK == false) {
@@ -91,9 +92,20 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
             // Reverse the path...
             Collections.reverse(arcs);
-
+            
             // Create the final solution.
-            solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
+            Path shortest_chemin;
+            shortest_chemin = new Path(graph, arcs);
+            Path le_chemin = new Path(graph, arcs);
+            if(le_chemin.isValid() == true) {
+            	if(labels[data.getDestination().getId()].getCout() == shortest_chemin.getLength()) {
+            		solution = new ShortestPathSolution(data, Status.OPTIMAL, le_chemin);
+            	}else {
+            		solution = new ShortestPathSolution(data, Status.FEASIBLE, le_chemin);
+            	}
+            }else {
+            	solution = new ShortestPathSolution(data, Status.INFEASIBLE, le_chemin);
+            }
         }else {//pas de solution
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);
         }
