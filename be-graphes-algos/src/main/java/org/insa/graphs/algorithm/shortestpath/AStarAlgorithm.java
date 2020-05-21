@@ -77,7 +77,7 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
         	        	
         	        	if(data.getMode() == Mode.LENGTH) { // En distance
         	        		estimation = (double) current.getSommetCourant().getPoint().distanceTo(data.getDestination().getPoint());
-        	            } else { // En temps
+        	            } if(data.getMode() == Mode.TIME) { // En temps
         	                int speed = Math.max(data.getMaximumSpeed(), data.getGraph().getGraphInformation().getMaximumSpeed()); 
         	                estimation = (double) (current.getSommetCourant().getPoint().distanceTo(data.getDestination().getPoint()) / speed * 1000.d / 3600.d);
         	            }
