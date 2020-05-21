@@ -76,13 +76,13 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
         				/* Calculer le coût estimé à vol d'oiseau selon le mode */
         	        	
         	        	if(data.getMode() == Mode.LENGTH) { // En distance
-        	        		estimation = (double) current.getSommetCourant().getPoint().distanceTo(data.getDestination().getPoint());
+        	        		estimation = (double) arcsSucessor.getDestination().getPoint().distanceTo(data.getDestination().getPoint());
         	            } if(data.getMode() == Mode.TIME) { // En temps
         	                int speed = Math.max(data.getMaximumSpeed(), data.getGraph().getGraphInformation().getMaximumSpeed()); 
-        	                estimation = (double) (current.getSommetCourant().getPoint().distanceTo(data.getDestination().getPoint()) / speed * 1000.d / 3600.d);
+        	                estimation = (double) (arcsSucessor.getDestination().getPoint().distanceTo(data.getDestination().getPoint()) / speed * 1000.d / 3600.d);
         	            }
         				coutTmp = current.getTotalCost() + arcsSucessor.getLength(); // on met à jour le cost de y
-        				labelsStar[current.getSommetCourant().getId()].setEstimation(estimation);
+        				labelsStar[arcsSucessor.getDestination().getId()].setEstimation(estimation);
         				if(labelsStar[arcsSucessor.getDestination().getId()].getCout() < Double.POSITIVE_INFINITY) {//si le cout est infini
         					tas.remove(labelsStar[arcsSucessor.getDestination().getId()]);
         				}
