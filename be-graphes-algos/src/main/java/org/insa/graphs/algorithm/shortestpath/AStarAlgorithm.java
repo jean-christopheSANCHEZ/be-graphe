@@ -69,9 +69,9 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
         	double coutTmp;
         	
         	for(Arc arcsSucessor : current.getSommetCourant().getSuccessors()) { //on parcourt tous les successeurs de current
-        		
-        		if(labelsStar[arcsSucessor.getDestination().getId()].getMarque() == false && data.isAllowed(arcsSucessor) ==true) { //si y est pas marquée et si l'arc est parcourable avec notre mode de transport
-        			if(labelsStar[arcsSucessor.getDestination().getId()].getCout() > current.getCout() + arcsSucessor.getLength()) {
+        		LabelStar tmp = labelsStar[arcsSucessor.getDestination().getId()];
+        		if(tmp.getMarque() == false && data.isAllowed(arcsSucessor) ==true) { //si y est pas marquée et si l'arc est parcourable avec notre mode de transport
+        			if(tmp.getCout() > current.getCout() + data.getCost(arcsSucessor)) {
         				this.notifyNodeReached(current.getSommetCourant());
         				/* Calculer le coût estimé à vol d'oiseau selon le mode */
         	        	
@@ -81,16 +81,17 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
         	                int speed = Math.max(data.getMaximumSpeed(), data.getGraph().getGraphInformation().getMaximumSpeed()); 
         	                estimation = (double) (arcsSucessor.getDestination().getPoint().distanceTo(data.getDestination().getPoint()) / speed * 1000.d / 3600.d);
         	            }
-        				coutTmp = current.getTotalCost() + arcsSucessor.getLength(); // on met à jour le cost de y
-        				labelsStar[arcsSucessor.getDestination().getId()].setEstimation(estimation);
-        				if(labelsStar[arcsSucessor.getDestination().getId()].getCout() < Double.POSITIVE_INFINITY) {//si le cout est infini
-        					tas.remove(labelsStar[arcsSucessor.getDestination().getId()]);
+        				coutTmp = tmp.getTotalCost(); // on met à jour le cost de y
+        				tmp.setEstimation(estimation);
+        				if(coutTmp < Double.POSITIVE_INFINITY) {//si le cout est infini
+        					tas.remove(tmp);
         				}
-        				labelsStar[arcsSucessor.getDestination().getId()].setCout(coutTmp);
-        				labelsStar[arcsSucessor.getDestination().getId()].setPere(arcsSucessor); //mettre le parent à jour
+        				tmp.setCout(current.getCout() + data.getCost(arcsSucessor));
+        				tmp.setPere(arcsSucessor); //mettre le parent à jour
         				predecessorArcs[arcsSucessor.getDestination().getId()] = arcsSucessor;
-        				tas.insert(labelsStar[arcsSucessor.getDestination().getId()]);
+        				tas.insert(tmp);
         				this.notifyNodeMarked(labelsStar[arcsSucessor.getDestination().getId()].getSommetCourant());
+        				labelsStar[tmp.getSommetCourant().getId()] = tmp;
         			}
         				
         			

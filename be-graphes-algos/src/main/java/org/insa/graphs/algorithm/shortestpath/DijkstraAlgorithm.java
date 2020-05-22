@@ -62,19 +62,20 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	double coutTmp;
         	
         	for(Arc arcsSucessor : current.getSommetCourant().getSuccessors()) { //on parcourt tous les successeurs de current
-        		
-        		if(labels[arcsSucessor.getDestination().getId()].getMarque() == false && data.isAllowed(arcsSucessor) ==true) { //si y est pas marquée et si l'arc est parcourable avec notre mode de transport
-        			if(labels[arcsSucessor.getDestination().getId()].getCout() > current.getCout() + arcsSucessor.getLength()) {
+        		Label tmp = labels[arcsSucessor.getDestination().getId()];
+        		if(tmp.getMarque() == false && data.isAllowed(arcsSucessor) ==true) { //si y est pas marquée et si l'arc est parcourable avec notre mode de transport
+        			if(tmp.getCout() > current.getCout() + data.getCost(arcsSucessor)) {
         				this.notifyNodeReached(current.getSommetCourant());
-        				coutTmp = current.getCout() + arcsSucessor.getLength(); // on met à jour le cost de y
-        				if(labels[arcsSucessor.getDestination().getId()].getCout() < Double.POSITIVE_INFINITY) {//si le cout est infini
-        					tas.remove(labels[arcsSucessor.getDestination().getId()]);
+        				coutTmp = tmp.getCout() ; // on met à jour le cost de y
+        				if(coutTmp < Double.POSITIVE_INFINITY) {//si le cout est infini
+        					tas.remove(tmp);
         				}
-        				labels[arcsSucessor.getDestination().getId()].setCout(coutTmp);
-        				labels[arcsSucessor.getDestination().getId()].setPere(arcsSucessor); //mettre le parent à jour
+        				tmp.setCout(current.getCout() + data.getCost(arcsSucessor));
+        				tmp.setPere(arcsSucessor); //mettre le parent à jour
         				predecessorArcs[arcsSucessor.getDestination().getId()] = arcsSucessor;
-        				tas.insert(labels[arcsSucessor.getDestination().getId()]);
+        				tas.insert(tmp);
         				this.notifyNodeMarked(labels[arcsSucessor.getDestination().getId()].getSommetCourant());
+        				labels[tmp.getSommetCourant().getId()] = tmp;
         			}
         				
         			
